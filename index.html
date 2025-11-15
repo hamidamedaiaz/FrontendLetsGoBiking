@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <!-- Header avec logo et liens -->
+    <!-- Header avec logo et liens (DESKTOP uniquement) -->
     <header>
         <div class="logo">
             <h1>Let's Go Biking</h1>
@@ -17,16 +17,16 @@
             <a href="itinerary.html">Itinéraire</a>
             <a href="about.html">À propos</a>
         </nav>
-        
-        <!-- Burger menu (visible mobile uniquement) -->
-        <div class="burger-menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
     </header>
 
-    <!-- Sidebar (disparaît en mobile) -->
+    <!-- Burger menu (MOBILE uniquement) -->
+    <div class="burger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Sidebar DESKTOP -->
     <aside class="sidebar">
         <h2>Menu</h2>
         <ul>
@@ -36,11 +36,20 @@
         </ul>
     </aside>
 
+    <!-- ✅ NOUVELLE : Sidebar MOBILE (slide depuis la droite) -->
+    <aside class="mobile-sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="index.html">🏠 Accueil</a></li>
+            <li><a href="itinerary.html">🚴 Itinéraire</a></li>
+            <li><a href="about.html">ℹ️ À propos</a></li>
+        </ul>
+    </aside>
+
     <!-- Contenu principal -->
     <main>
         <h1>Trouvez votre itinéraire vélo à Nice</h1>
         
-        <!-- Zone autocompletes (à développer en Web Components plus tard) -->
         <div class="search-container">
             <div class="input-group">
                 <label>Point de départ :</label>
@@ -61,10 +70,10 @@
         <p>&copy; 2025 Let's Go Biking - Projet SOC/Middleware</p>
     </footer>
 
-    <!-- Overlay semi-transparent (pour burger menu mobile) -->
+    <!-- Overlay semi-transparent -->
     <div class="overlay"></div>
 
-    <!-- JS en bas du body -->
+    <!-- JS -->
     <script src="js/main.js"></script>
 </body>
 </html>

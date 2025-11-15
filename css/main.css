@@ -175,7 +175,7 @@ footer {
         grid-template-rows: 1fr 60px;
     }
 
-    /* Logo disparaît EN MODE NORMAL (pas dans le menu burger) */
+    /* Logo disparaît EN MODE NORMAL */
     header .logo {
         display: none;
     }
@@ -194,10 +194,20 @@ footer {
         z-index: 1000;
     }
 
+    /* ✅ Lignes du burger en NOIR */
+    .burger-menu span {
+        background: #000000;
+    }
+
+    /* ✅ Quand menu ouvert, lignes en BLANC */
+    .burger-menu.active span {
+        background: white;
+    }
+
     /* Header caché par défaut, prêt à apparaître */
     header {
         position: fixed;
-        right: -100%; /* Caché hors écran à droite */
+        right: -100%;
         top: 0;
         height: 100vh;
         width: 300px;
@@ -212,12 +222,12 @@ footer {
 
     /* Quand on clique sur le burger, header apparaît */
     header.active {
-        right: 0; /* Glisse depuis la droite */
+        right: 0;
     }
 
     /* Les liens deviennent verticaux */
     .nav-links {
-        display: flex; /* Important ! */
+        display: flex;
         flex-direction: column;
         align-items: center;
         gap: 1.5rem;
@@ -225,6 +235,122 @@ footer {
 
     .nav-links a {
         font-size: 1.2rem;
+    }
+
+    /* Animation burger -> cross */
+    .burger-menu.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .burger-menu.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .burger-menu.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    /* Main prend toute la largeur */
+    main {
+        padding: 1rem;
+    }
+}
+/* === MOBILE SIDEBAR (cachée par défaut) === */
+.mobile-sidebar {
+    display: none; /* Caché en desktop */
+}
+
+/* === MEDIA QUERIES - MOBILE === */
+@media (max-width: 1001px) {
+    
+    body {
+        grid-template-areas:
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 60px;
+    }
+
+    /* Header desktop disparaît complètement */
+    header {
+        display: none;
+    }
+
+    /* Sidebar desktop disparaît */
+    aside.sidebar {
+        display: none;
+    }
+
+    /* ✅ Burger menu apparaît */
+    .burger-menu {
+        display: flex;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        cursor: pointer;
+    }
+
+    /* Lignes du burger en NOIR */
+    .burger-menu span {
+        width: 30px;
+        height: 3px;
+        background: #000000;
+        transition: all 0.3s ease;
+    }
+
+    /* Quand menu ouvert, lignes en BLANC */
+    .burger-menu.active span {
+        background: white;
+    }
+
+    /* ✅ MOBILE SIDEBAR - slide depuis la droite */
+    .mobile-sidebar {
+        display: block;
+        position: fixed;
+        right: -300px; /* Cachée hors écran */
+        top: 0;
+        width: 300px;
+        height: 100vh;
+        background: #2c3e50;
+        color: white;
+        padding: 4rem 2rem 2rem 2rem;
+        z-index: 999;
+        transition: right 1s ease;
+        overflow-y: auto;
+    }
+
+    /* Quand active, sidebar apparaît */
+    .mobile-sidebar.active {
+        right: 0;
+    }
+
+    .mobile-sidebar h2 {
+        color: #3498db;
+        margin-bottom: 2rem;
+        font-size: 1.5rem;
+    }
+
+    .mobile-sidebar ul {
+        list-style: none;
+    }
+
+    .mobile-sidebar li {
+        margin-bottom: 1.5rem;
+    }
+
+    .mobile-sidebar a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.2rem;
+        display: block;
+        padding: 0.75rem;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+    }
+
+    .mobile-sidebar a:hover {
+        background: rgba(52, 152, 219, 0.2);
     }
 
     /* Animation burger -> cross */
