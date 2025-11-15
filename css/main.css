@@ -164,7 +164,7 @@ footer {
     display: block;
 }
 /* === MEDIA QUERIES - PORTRAIT/MOBILE === */
-@media (max-width: 768px) and (orientation: portrait) {
+@media (max-width: 1001px){
     
     body {
         grid-template-areas:
