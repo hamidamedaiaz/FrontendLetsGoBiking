@@ -1,12 +1,11 @@
-// Sélection des éléments
+import AddressAutocomplete from './autocomplete.js';
+
+// === BURGER MENU ===
 const burgerMenu = document.querySelector('.burger-menu');
 const mobileSidebar = document.querySelector('.mobile-sidebar');
 const overlay = document.querySelector('.overlay');
-
-// État du menu
 let menuOpen = false;
 
-// Fonction pour ouvrir le menu
 function openMenu() {
     burgerMenu.classList.add('active');
     mobileSidebar.classList.add('active');
@@ -14,7 +13,6 @@ function openMenu() {
     menuOpen = true;
 }
 
-// Fonction pour fermer le menu
 function closeMenu() {
     burgerMenu.classList.remove('active');
     mobileSidebar.classList.remove('active');
@@ -22,29 +20,53 @@ function closeMenu() {
     menuOpen = false;
 }
 
-// Écouter le clic sur burger menu
 if (burgerMenu) {
     burgerMenu.addEventListener('click', () => {
-        if (menuOpen) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
+        menuOpen ? closeMenu() : openMenu();
     });
 }
 
-// Fermer en cliquant sur l'overlay
 if (overlay) {
     overlay.addEventListener('click', closeMenu);
 }
 
-// Fermer en cliquant sur un lien du menu mobile
 if (mobileSidebar) {
     document.querySelectorAll('.mobile-sidebar a').forEach(link => {
         link.addEventListener('click', () => {
-            if (menuOpen) {
-                closeMenu();
-            }
+            if (menuOpen) closeMenu();
         });
     });
 }
+
+// === AUTOCOMPLETE ===
+const originAutocomplete = new AddressAutocomplete('origin', 'origin-results');
+const destinationAutocomplete = new AddressAutocomplete('destination', 'destination-results');
+
+// Écouter la sélection des adresses
+document.getElementById('origin').addEventListener('addressSelected', (e) => {
+    console.log('Origine sélectionnée:', e.detail);
+});
+
+document.getElementById('destination').addEventListener('addressSelected', (e) => {
+    console.log('Destination sélectionnée:', e.detail);
+});
+
+// Bouton rechercher
+document.getElementById('search-btn').addEventListener('click', () => {
+    const origin = originAutocomplete.getSelectedAddress();
+    const destination = destinationAutocomplete.getSelectedAddress();
+
+    if (!origin || !destination) {
+        alert('Veuillez sélectionner une origine et une destination');
+        return;
+    }
+
+    // Sauvegarder dans localStorage
+    localStorage.setItem('itinerary', JSON.stringify({
+        origin,
+        destination
+    }));
+
+    // Rediriger vers la page itinéraire
+    window.location.href = 'itinerary.html';
+});
