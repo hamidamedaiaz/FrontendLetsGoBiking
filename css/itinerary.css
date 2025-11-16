@@ -1,0 +1,370 @@
+/* === PAGE ITINÉRAIRE === */
+.itinerary-page {
+    display: flex;
+    height: calc(100vh - 80px);
+    position: relative;
+}
+
+/* === SIDEBAR GAUCHE (RECHERCHE + INSTRUCTIONS) === */
+.search-sidebar {
+    width: 400px;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.toggle-sidebar-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+/* === FORMULAIRE DE RECHERCHE === */
+.search-form {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.mode-selector {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.mode-btn i {
+    font-size: 1.5rem;
+    color: #6b7280;
+}
+
+.mode-btn span {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.mode-btn:hover {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.mode-btn.active {
+    border-color: #3498db;
+    background: #3498db;
+    color: white;
+}
+
+.mode-btn.active i,
+.mode-btn.active span {
+    color: white;
+}
+
+.calculate-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.calculate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.calculate-btn:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* === RÉSULTATS === */
+.results-container {
+    padding: 1.5rem;
+}
+
+.results-header {
+    margin-bottom: 1rem;
+}
+
+.results-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Résumé */
+.summary {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.1));
+    padding: 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.summary-item:last-child {
+    margin-bottom: 0;
+}
+
+.summary-item i {
+    font-size: 1.25rem;
+    color: #3498db;
+    width: 24px;
+}
+
+.summary-item strong {
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+/* Stations */
+.stations-info {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.station-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid #3498db;
+}
+
+.station-card:last-child {
+    margin-bottom: 0;
+}
+
+.station-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.station-card p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.bikes-info {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.bikes-info span {
+    font-size: 0.85rem;
+    color: #10b981;
+    font-weight: 500;
+}
+
+/* Instructions */
+.instructions h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.step-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.step-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.step-icon {
+    width: 40px;
+    height: 40px;
+    background: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.step-icon i {
+    font-size: 1.1rem;
+    color: #3498db;
+}
+
+.step-icon.walk i {
+    color: #3498db;
+}
+
+.step-icon.bike i {
+    color: #10b981;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content p {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.step-content small {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+/* === CARTE === */
+.map-container {
+    flex: 1;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.floating-btn {
+    display: none;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 50px;
+    height: 50px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.floating-btn:hover {
+    background: #2980b9;
+    transform: scale(1.1);
+}
+
+/* === LOADING & ERROR === */
+.loading {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    border: 4px solid #f3f4f6;
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading p {
+    color: #6b7280;
+}
+
+.error-message {
+    padding: 1.5rem;
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #ef4444;
+    border-radius: 4px;
+    margin: 1.5rem;
+}
+
+.error-message i {
+    color: #ef4444;
+    margin-right: 0.5rem;
+}
+
+.error-message p {
+    color: #ef4444;
+    display: inline;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .search-sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 90%;
+        max-width: 400px;
+        transform: translateX(-100%);
+    }
+
+    .search-sidebar.active {
+        transform: translateX(0);
+    }
+
+    .toggle-sidebar-btn {
+        display: block;
+    }
+
+    .floating-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

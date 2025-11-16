@@ -51,7 +51,7 @@ document.getElementById('destination').addEventListener('addressSelected', (e) =
     console.log('Destination sélectionnée:', e.detail);
 });
 
-// Bouton rechercher
+// === BOUTON RECHERCHER ===
 document.getElementById('search-btn').addEventListener('click', () => {
     const origin = originAutocomplete.getSelectedAddress();
     const destination = destinationAutocomplete.getSelectedAddress();
@@ -61,12 +61,32 @@ document.getElementById('search-btn').addEventListener('click', () => {
         return;
     }
 
+    // ✅ Afficher le loader avec animation
+    showLoader();
+
     // Sauvegarder dans localStorage
     localStorage.setItem('itinerary', JSON.stringify({
         origin,
         destination
     }));
 
-    // Rediriger vers la page itinéraire
-    window.location.href = 'itinerary.html';
+    // ✅ Rediriger après 2 secondes (durée de l'animation)
+    setTimeout(() => {
+        window.location.href = 'itinerary.html';
+    }, 2000);
 });
+
+// Fonctions loader
+function showLoader() {
+    const loader = document.querySelector('.loading-overlay');
+    if (loader) {
+        loader.classList.add('active');
+    }
+}
+
+function hideLoader() {
+    const loader = document.querySelector('.loading-overlay');
+    if (loader) {
+        loader.classList.remove('active');
+    }
+}
