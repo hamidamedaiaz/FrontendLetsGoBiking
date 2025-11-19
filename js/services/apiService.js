@@ -1,113 +1,99 @@
 /**
- * Service API - Communication avec le backend C#
+ * Service API - Communication avec le backend C# WCF REST
  */
 
 const API_CONFIG = {
-    BASE_URL: 'http://localhost:8080', // Ton backend C#
-    ENDPOINTS: {
-        ITINERARY: '/api/itinerary',
-        PING: '/api/ping'
-    }
+    BASE_URL: 'http://localhost:8733/RoutingService',
+    TIMEOUT: 30000
 };
 
 class APIService {
-    /**
-     * Calcule un itinéraire via le backend
-     */
-    static async calculateItinerary(originLat, originLon, destLat, destLon, useBike = true) {
+
+    static async calculateItinerary(originLat, originLon, destLat, destLon) {
         try {
-            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ITINERARY}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    origin: {
-                        latitude: originLat,
-                        longitude: originLon
-                    },
-                    destination: {
-                        latitude: destLat,
-                        longitude: destLon
-                    },
-                    useBike: useBike
-                })
+            const originCity = await this.getCityFromCoords(originLat, originLon);
+            const destCity = await this.getCityFromCoords(destLat, destLon);
+
+            const url =
+                `${API_CONFIG.BASE_URL}/itinerary?originLat=${originLat}` +
+                `&originLon=${originLon}` +
+                `&originCity=${encodeURIComponent(originCity)}` +
+                `&destLat=${destLat}` +
+                `&destLon=${destLon}` +
+                `&destCity=${encodeURIComponent(destCity)}`;
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
             });
 
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP ${response.status}`);
-            }
+            if (!response.ok) throw new Error(await response.text());
 
-            const data = await response.json();
-            console.log('✅ Itinéraire reçu du backend:', data);
-            return data;
+            const raw = await response.json();
+            const wcfData = raw.GetItineraryResult || raw;
 
-        } catch (error) {
-            console.error('❌ Erreur backend:', error);
-            
-            // ⚠️ Pour les tests SANS backend, retourner des données fake
-            console.warn('Mode DEMO - Utilisation de données fictives');
-            return this.getMockItinerary(originLat, originLon, destLat, destLon, useBike);
+            if (!wcfData.Success) throw new Error(wcfData.Message);
+
+            return this.transformWCFResponse(wcfData, originLat, originLon, destLat, destLon);
+
+        } catch (err) {
+            console.error("❌ API error:", err);
+            throw err;
         }
     }
 
     /**
-     * Données fictives pour les tests (à enlever quand le backend est prêt)
+     * Transforme ton backend → format simple utilisé par le front
      */
-    static getMockItinerary(originLat, originLon, destLat, destLon, useBike) {
+    static transformWCFResponse(wcfData, originLat, originLon, destLat, destLon) {
+
+        const data = wcfData.Data;
+
         return {
-            UseBike: useBike,
-            TotalDistance: 5500,
-            TotalDuration: 25,
+            Success: true,
+            UseBike: wcfData.Message === "bike",
+            TotalDistance: data.TotalDistance,
+            TotalDuration: data.TotalDuration,
+
+            Geometry: data.Geometry,   // ← IMPORTANT : coords ici
+            Steps: data.Steps.map(s => ({
+                type: s.Type,
+                instruction: s.Instructions,
+                distance: s.Distance,
+                duration: s.Duration
+            })),
+
             Origin: { Latitude: originLat, Longitude: originLon },
-            Destination: { Latitude: destLat, Longitude: destLon },
-            ClosestOriginStation: useBike ? {
-                Name: "Station Vélobleu - Exemple",
-                Latitude: originLat + 0.001,
-                Longitude: originLon + 0.001,
-                AvailableBikes: 5,
-                BikeStands: 15
-            } : null,
-            ClosestDestinationStation: useBike ? {
-                Name: "Station Vélobleu - Arrivée",
-                Latitude: destLat - 0.001,
-                Longitude: destLon - 0.001,
-                AvailableBikes: 3,
-                BikeStands: 12
-            } : null,
-            Itinerary: {
-                routes: [{
-                    summary: { distance: 5500, duration: 1500 },
-                    geometry: {
-                        coordinates: [
-                            [originLon, originLat],
-                            [destLon, destLat]
-                        ]
-                    },
-                    segments: [{
-                        steps: [
-                            { instruction: "Partir vers le nord", distance: 500, duration: 120 },
-                            { instruction: "Tourner à droite", distance: 300, duration: 80 },
-                            { instruction: "Continuer tout droit", distance: 4700, duration: 1300 }
-                        ]
-                    }]
-                }]
-            },
-            PreferredOption: useBike ? "Le vélo est recommandé pour ce trajet" : "La marche est recommandée"
+            Destination: { Latitude: destLat, Longitude: destLon }
         };
     }
 
     /**
-     * Test de connexion au backend
+     * Reverse geocoding France
      */
+    static async getCityFromCoords(lat, lon) {
+        try {
+            const res = await fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${lon}&lat=${lat}`);
+            const data = await res.json();
+
+            if (data.features?.length > 0) {
+                return data.features[0].properties.city || "Unknown";
+            }
+        } catch { }
+
+        return "Unknown";
+    }
+
     static async testConnection() {
         try {
-            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PING}`);
-            const data = await response.json();
-            console.log('✅ Backend connecté:', data);
-            return true;
-        } catch (error) {
-            console.warn('⚠️ Backend non accessible - Mode DEMO activé');
+            const testUrl =
+                `${API_CONFIG.BASE_URL}/itinerary?originLat=43.7102&originLon=7.2620&originCity=Nice` +
+                `&destLat=43.7150&destLon=7.2700&destCity=Nice`;
+
+            const res = await fetch(testUrl);
+            return res.ok;
+
+        } catch {
             return false;
         }
     }

@@ -95,26 +95,44 @@ class MapService {
     /**
      * Affiche l'itinéraire complet
      */
-    displayItinerary(data) {
-        this.clearRoutes();
+ displayItinerary(data) {
+    this.clearRoutes();
 
-        if (data.UseBike && data.ClosestOriginStation) {
-            // Mode vélo : 3 segments
-            const coords1 = this.extractCoordinates(data.Itinerary.OriginToStation?.routes[0]?.geometry);
-            const coords2 = this.extractCoordinates(data.Itinerary.StationToStation?.routes[0]?.geometry);
-            const coords3 = this.extractCoordinates(data.Itinerary.StationToDestination?.routes[0]?.geometry);
+    const coords = data.Geometry.Coordinates.map(c => [c[1], c[0]]); // lat, lon
 
-            if (coords1.length) this.drawRoute(coords1, '#3498db', 4, '10, 5');
-            if (coords2.length) this.drawRoute(coords2, '#10b981', 6);
-            if (coords3.length) this.drawRoute(coords3, '#3498db', 4, '10, 5');
-        } else {
-            // Mode marche : 1 segment
-            const coords = this.extractCoordinates(data.Itinerary?.routes[0]?.geometry);
-            if (coords.length) this.drawRoute(coords, '#3498db', 5);
-        }
+    coords.forEach(([lat, lon]) => {
+        L.circleMarker([lat, lon], {
+            radius: 0.5,
+            color: "#3498db",
+            fillColor: "#07385aff",
+            fillOpacity: 1            drawWalkPoint(lat, lon) {
+                const point = L.circleMarker([lat, lon], {
+                    radius: 5,
+                    color: "orange",
+                    fillColor: "orange",
+                    fillOpacity: 1
+                }).addTo(this.map);
+            
+                this.polylines.push(point);
+            }
+        }).addTo(this.map);
+    });
 
-        this.fitBounds();
+    // --- afficher vélo en ligne verte ---
+    if (data.UseBike) {
+        const polyline = L.polyline(coords, {
+            color: "#10b981",
+            weight: 4,
+            opacity: 0.8
+        }).addTo(this.map);
+
+        this.polylines.push(polyline);
     }
+
+    this.fitBounds();
+}
+
+
 
     /**
      * Ajuste la vue pour tout afficher
@@ -155,6 +173,36 @@ class MapService {
         });
         this.clearRoutes();
     }
+
+
+
+drawWalkPoint(lat, lon) {
+    const point = L.circleMarker([lat, lon], {
+        radius: 0.5,
+        color: "orange",
+        fillColor: "orange",
+        fillOpacity: 1
+    }).addTo(this.map);
+
+    this.polylines.push(point);
+}
+drawSegment(segment) {
+    if (!segment.coordinates || !segment.type) return;
+
+    // Convertir en format Leaflet
+    const coords = segment.coordinates.map(c => [c[1], c[0]]);
+
+    if (segment.type.toLowerCase() === "walk") {
+        // Afficher chaque point
+        coords.forEach(([lat, lon]) => this.drawWalkPoint(lat, lon));
+    }
+    else if (segment.type.toLowerCase() === "bike") {
+        // Afficher une ligne
+        this.drawRoute(coords, "#10b981", 5);   // vert vélo
+    }
+}
+
+
 }
 
 export default MapService;

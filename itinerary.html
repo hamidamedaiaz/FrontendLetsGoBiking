@@ -2,20 +2,22 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial=device-width, maximum-scale=1.0" />
     <title>Let's Go Biking - Itinéraire</title>
-    
-    <!-- Leaflet CSS pour la carte -->
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <!-- Font Awesome pour les icônes -->
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
+
     <!-- CSS personnalisé -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/itinerary.css">
 </head>
+
 <body>
+
     <!-- Header -->
     <header>
         <div class="logo">
@@ -28,14 +30,12 @@
         </nav>
     </header>
 
-    <!-- Burger menu (mobile) -->
+    <!-- Burger menu -->
     <div class="burger-menu">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </div>
 
-    <!-- Sidebar mobile -->
+    <!-- Sidebar Mobile -->
     <aside class="mobile-sidebar">
         <h2>Menu</h2>
         <ul>
@@ -45,10 +45,12 @@
         </ul>
     </aside>
 
-    <!-- Contenu principal -->
+    <!-- Page Itinéraire -->
     <main class="itinerary-page">
-        <!-- Sidebar gauche (recherche + instructions) -->
+
+        <!-- Sidebar Gauche (Recherche + Steps) -->
         <aside class="search-sidebar" id="searchSidebar">
+
             <div class="sidebar-header">
                 <h2>Calculer un itinéraire</h2>
                 <button class="toggle-sidebar-btn" id="toggleSidebar">
@@ -56,66 +58,54 @@
                 </button>
             </div>
 
-            <!-- Formulaire de recherche -->
             <div class="search-form">
-                <!-- Départ -->
+
+                <!-- Input départ -->
                 <div class="input-group">
                     <label for="originInput">
-                        <i class="fas fa-map-marker-alt" style="color: #3498db;"></i>
-                        Départ
+                        <i class="fas fa-map-marker-alt" style="color:#3498db;"></i> Départ
                     </label>
+
                     <div class="autocomplete-wrapper">
-                        <input 
-                            type="text" 
-                            id="originInput" 
-                            placeholder="Entrez une adresse de départ..."
-                            autocomplete="off"
-                        >
+                        <input type="text" id="originInput" placeholder="Entrez une adresse de départ..." autocomplete="off">
                         <ul class="autocomplete-results" id="origin-results"></ul>
                     </div>
                 </div>
 
-                <!-- Arrivée -->
+                <!-- Input destination -->
                 <div class="input-group">
                     <label for="destinationInput">
-                        <i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i>
-                        Arrivée
+                        <i class="fas fa-map-marker-alt" style="color:#e74c3c;"></i> Arrivée
                     </label>
+
                     <div class="autocomplete-wrapper">
-                        <input 
-                            type="text" 
-                            id="destinationInput" 
-                            placeholder="Entrez une adresse d'arrivée..."
-                            autocomplete="off"
-                        >
+                        <input type="text" id="destinationInput" placeholder="Entrez une adresse d'arrivée..." autocomplete="off">
                         <ul class="autocomplete-results" id="destination-results"></ul>
                     </div>
                 </div>
 
-                <!-- Mode de transport -->
+                <!-- Choix mode -->
                 <div class="input-group">
                     <label>Mode de transport</label>
                     <div class="mode-selector">
                         <button class="mode-btn active" data-mode="bike">
-                            <i class="fas fa-bicycle"></i>
-                            <span>Vélo</span>
+                            <i class="fas fa-bicycle"></i> Vélo
                         </button>
                         <button class="mode-btn" data-mode="walk">
-                            <i class="fas fa-walking"></i>
-                            <span>À pied</span>
+                            <i class="fas fa-walking"></i> À pied
                         </button>
                     </div>
                 </div>
 
-                <!-- Bouton calculer -->
+                <!-- Bouton calcul -->
                 <button class="calculate-btn" id="calculateBtn">
-                    <i class="fas fa-route"></i>
-                    Calculer l'itinéraire
+                    <i class="fas fa-route"></i> Calculer l'itinéraire
                 </button>
             </div>
 
-            <!-- Résultats (instructions) -->
-            <div class="results-container" id="resultsContainer" style="display: none;">
+            <!-- Résultats -->
+            <div class="results-container" id="resultsContainer" style="display:none;">
+
                 <div class="results-header">
                     <h3>Résultats</h3>
                 </div>
@@ -123,49 +113,46 @@
                 <!-- Résumé -->
                 <div class="summary" id="summary"></div>
 
-                <!-- Stations (si vélo) -->
-                <div class="stations-info" id="stationsInfo" style="display: none;"></div>
-
-                <!-- Instructions détaillées -->
+                <!-- Instructions -->
                 <div class="instructions" id="instructions">
                     <h4><i class="fas fa-list"></i> Instructions</h4>
                     <div id="steps"></div>
                 </div>
             </div>
 
-            <!-- Loading -->
-            <div class="loading" id="loading" style="display: none;">
+            <!-- Chargement -->
+            <div class="loading" id="loading" style="display:none;">
                 <div class="spinner"></div>
                 <p>Calcul en cours...</p>
             </div>
 
             <!-- Erreur -->
-            <div class="error-message" id="errorMessage" style="display: none;">
+            <div class="error-message" id="errorMessage" style="display:none;">
                 <i class="fas fa-exclamation-triangle"></i>
                 <p id="errorText"></p>
             </div>
+
         </aside>
 
         <!-- Carte -->
         <div class="map-container">
             <div id="map"></div>
-            
-            <!-- Bouton flottant pour ouvrir sidebar (mobile) -->
+
+            <!-- Bouton Sidebar mobile -->
             <button class="floating-btn" id="openSidebar">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
+
     </main>
 
-    <!-- Overlay -->
     <div class="overlay"></div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Scripts personnalisés -->
-    <script type="module" src="js/services/apiService.js"></script>
-    <script type="module" src="js/services/mapService.js"></script>
+    <!-- Module Principal → UN SEUL script -->
     <script type="module" src="js/pages/itinerary.js"></script>
+
 </body>
 </html>
