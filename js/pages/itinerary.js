@@ -58,6 +58,8 @@ class ItineraryPage {
                 destination.coordinates[0]
             );
 
+            console.log("📊 Résultat reçu:", result);
+
             this.displayResults(result);
             this.mapService.displayItinerary(result);
 
@@ -71,19 +73,24 @@ class ItineraryPage {
         const summaryDiv = document.getElementById('summary');
         const stepsDiv = document.getElementById('steps');
 
+        const modeText = data.Message === "bike" 
+            ? "🚴 Vélo + Marche" 
+            : "🚶 Marche uniquement";
+
         summaryDiv.innerHTML = `
             <p><strong>Distance :</strong> ${(data.TotalDistance / 1000).toFixed(2)} km</p>
             <p><strong>Durée :</strong> ${(data.TotalDuration / 60).toFixed(0)} min</p>
-            <p><strong>Mode :</strong> ${data.UseBike ? "Vélo + Marche" : "Marche"}</p>
+            <p><strong>Mode :</strong> ${modeText}</p>
         `;
 
         stepsDiv.innerHTML = "";
         data.Steps.forEach(step => {
 
             const icon = step.type === "bike" ? "🚴" : "🚶";
+            const stepClass = step.type === "bike" ? "bike-step" : "walk-step";
 
             const div = document.createElement('div');
-            div.className = "step-item";
+            div.className = `step-item ${stepClass}`;
 
             div.innerHTML = `
                 <p>${icon} ${step.instruction}</p>

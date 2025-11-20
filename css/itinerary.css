@@ -367,4 +367,72 @@
         align-items: center;
         justify-content: center;
     }
+    
+}
+/* === LÉGENDE CARTE === */
+.map-legend {
+    position: absolute;
+    bottom: 30px;
+    left: 10px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    font-size: 0.85rem;
+}
+
+.map-legend h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.legend-item:last-child {
+    margin-bottom: 0;
+}
+
+.legend-line {
+    width: 30px;
+    height: 3px;
+    border-radius: 2px;
+}
+
+.legend-line.bike {
+    background: #10b981;
+}
+
+.legend-line.walk {
+    background: #f59e0b;
+    background-image: repeating-linear-gradient(
+        90deg,
+        #f59e0b,
+        #f59e0b 5px,
+        transparent 5px,
+        transparent 10px
+    );
+}
+
+.legend-item span {
+    color: #6b7280;
+}
+
+@media (max-width: 768px) {
+    .map-legend {
+        bottom: 10px;
+        left: 10px;
+        font-size: 0.75rem;
+        padding: 10px;
+    }
+    .legend-line {
+        width: 20px;
+    }
 }

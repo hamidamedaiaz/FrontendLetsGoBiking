@@ -1,6 +1,3 @@
-/**
- * Service de carte - Gestion de Leaflet
- */
 
 class MapService {
     constructor() {
@@ -25,7 +22,6 @@ class MapService {
             maxZoom: 19
         }).addTo(this.map);
 
-        console.log('🗺️ Carte initialisée');
     }
 
     /**
@@ -84,55 +80,60 @@ class MapService {
     }
 
     /**
-     * Extrait les coordonnées depuis GeoJSON
+     *  MÉTHODE PRINCIPALE - Affiche l'itinéraire complet
      */
-    extractCoordinates(geometry) {
-        if (!geometry || !geometry.coordinates) return [];
-        // OpenRouteService retourne [lon, lat], on inverse en [lat, lon]
-        return geometry.coordinates.map(coord => [coord[1], coord[0]]);
+    displayItinerary(data) {
+        this.clearRoutes();
+
+        // Convertir coordonnées backend (lon, lat) → Leaflet (lat, lon)
+        const allCoords = data.Geometry.Coordinates.map(c => [c[1], c[0]]);
+
+        if (allCoords.length === 0) {
+            console.error(" Aucune coordonnée reçue");
+            return;
+        }
+
+        // Mode vélo : tracer segments différenciés
+        if (data.UseBike && data.Steps && data.Steps.length > 0) {
+            this.drawSegmentedRoute(data.Steps, allCoords);
+        } else {
+            // Mode marche uniquement : ligne orange pointillée
+            this.drawRoute(allCoords, '#f2283cff', 4, '10, 5');
+        }
+
+        this.fitBounds();
     }
 
     /**
-     * Affiche l'itinéraire complet
+     * NOUVELLE MÉTHODE - Dessine segments walk/bike différenciés
      */
- displayItinerary(data) {
-    this.clearRoutes();
+    drawSegmentedRoute(steps, allCoords) {
+        let currentIndex = 0;
+        const totalDistance = steps.reduce((sum, s) => sum + s.distance, 0);
 
-    const coords = data.Geometry.Coordinates.map(c => [c[1], c[0]]); // lat, lon
 
-    coords.forEach(([lat, lon]) => {
-        L.circleMarker([lat, lon], {
-            radius: 0.5,
-            color: "#3498db",
-            fillColor: "#07385aff",
-            fillOpacity: 1            drawWalkPoint(lat, lon) {
-                const point = L.circleMarker([lat, lon], {
-                    radius: 5,
-                    color: "orange",
-                    fillColor: "orange",
-                    fillOpacity: 1
-                }).addTo(this.map);
+        steps.forEach((step, i) => {
+            const stepRatio = step.distance / totalDistance;
+            const pointsInStep = Math.max(2, Math.round(allCoords.length * stepRatio));
             
-                this.polylines.push(point);
+            const endIndex = Math.min(currentIndex + pointsInStep, allCoords.length);
+            const segmentCoords = allCoords.slice(currentIndex, endIndex);
+            currentIndex = endIndex;
+
+            if (segmentCoords.length < 2) {
+                console.warn(` Segment ${i} trop court (${segmentCoords.length} points)`);
+                return;
             }
-        }).addTo(this.map);
-    });
 
-    // --- afficher vélo en ligne verte ---
-    if (data.UseBike) {
-        const polyline = L.polyline(coords, {
-            color: "#10b981",
-            weight: 4,
-            opacity: 0.8
-        }).addTo(this.map);
+            console.log(`📍 Step ${i + 1}/${steps.length}: ${step.type} - ${segmentCoords.length} points`);
 
-        this.polylines.push(polyline);
+            if (step.type.toLowerCase() === 'bike') {
+                this.drawRoute(segmentCoords, '#3120b5ff', 6);
+            } else {
+                this.drawRoute(segmentCoords, '#cc1f4dff', 5, '10, 5');
+            }
+        });
     }
-
-    this.fitBounds();
-}
-
-
 
     /**
      * Ajuste la vue pour tout afficher
@@ -145,7 +146,9 @@ class MapService {
         });
 
         this.polylines.forEach(polyline => {
-            bounds.extend(polyline.getBounds());
+            if (polyline.getBounds) {
+                bounds.extend(polyline.getBounds());
+            }
         });
 
         if (bounds.isValid()) {
@@ -173,36 +176,6 @@ class MapService {
         });
         this.clearRoutes();
     }
-
-
-
-drawWalkPoint(lat, lon) {
-    const point = L.circleMarker([lat, lon], {
-        radius: 0.5,
-        color: "orange",
-        fillColor: "orange",
-        fillOpacity: 1
-    }).addTo(this.map);
-
-    this.polylines.push(point);
-}
-drawSegment(segment) {
-    if (!segment.coordinates || !segment.type) return;
-
-    // Convertir en format Leaflet
-    const coords = segment.coordinates.map(c => [c[1], c[0]]);
-
-    if (segment.type.toLowerCase() === "walk") {
-        // Afficher chaque point
-        coords.forEach(([lat, lon]) => this.drawWalkPoint(lat, lon));
-    }
-    else if (segment.type.toLowerCase() === "bike") {
-        // Afficher une ligne
-        this.drawRoute(coords, "#10b981", 5);   // vert vélo
-    }
-}
-
-
 }
 
 export default MapService;
