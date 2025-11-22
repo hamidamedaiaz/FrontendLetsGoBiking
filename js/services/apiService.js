@@ -22,22 +22,30 @@ class APIService {
                 `&destLon=${destLon}` +
                 `&destCity=${encodeURIComponent(destCity)}`;
 
+            console.log('➡️ API request URL:', url);
             const response = await fetch(url, {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' }
             });
 
-            if (!response.ok) throw new Error(await response.text());
+            if (!response.ok) {
+                // Lire le corps pour afficher un message d'erreur utile
+                const text = await response.text();
+                console.error('❌ API response not OK', response.status, text);
+                throw new Error(`HTTP ${response.status}: ${text}`);
+            }
 
             const raw = await response.json();
             const wcfData = raw.GetItineraryResult || raw;
 
             if (!wcfData.Success) throw new Error(wcfData.Message);
+            console.log('✅ API response data:', wcfData);
 
             return this.transformWCFResponse(wcfData, originLat, originLon, destLat, destLon);
 
         } catch (err) {
-            console.error("❌ API error:", err);
+            console.error("❌ API error in calculateItinerary:", err);
+            // Rethrow so caller can handle; message now includes HTTP code / body when possible
             throw err;
         }
     }

@@ -73,9 +73,15 @@ class ItineraryPage {
         const summaryDiv = document.getElementById('summary');
         const stepsDiv = document.getElementById('steps');
 
-        const modeText = data.Message === "bike" 
-            ? "🚴 Vélo + Marche" 
-            : "🚶 Marche uniquement";
+        // Construire le texte du mode à partir des types trouvés dans les steps
+        const types = Array.from(new Set((data.Steps || []).map(s => (s.type || '').toLowerCase())));
+        const mapLabel = {
+            'bike': '🚴 Vélo',
+            'walk': '🚶 Marche'
+        };
+        const modeText = types.length > 0
+            ? types.map(t => mapLabel[t] || t).join(' + ')
+            : '—';
 
         summaryDiv.innerHTML = `
             <p><strong>Distance :</strong> ${(data.TotalDistance / 1000).toFixed(2)} km</p>
